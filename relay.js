@@ -45,6 +45,14 @@ baseClient.addListener('message', function(f, t, m) {
       var echoState = 1;
       baseClient.say(t, 'echo='+echoState);
     }
+    else if (com.command == 'join') {
+      relayClient.say('#testdong', 'hi');
+      new irc.Client.part(config.relayServer, config.relayNick, config.relayConnection);
+      //config.relayConnection.channels[0] = '#testdong1';      
+      //relayClient.join('#testdong');
+      //relayClient.join(config.relayConnection.channels[0]);
+      //relayClient = new irc.Client(config.relayServer, config.relayNick, config.relayConnection);
+    }
   }
 });
 

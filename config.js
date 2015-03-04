@@ -1,9 +1,9 @@
 module.exports = {
-  masters: ['b4x'],
-  baseServer: 'irc.ihazurinter.net',
-  relayServer: 'irc.rizon.net',
-  baseNick: 'belay',
-  relayNick: 'biffo',
+  masters: ['insertnick'], //nick
+  baseServer: '',
+  relayServer: '',
+  baseNick: '',
+  relayNick: '',
   commandIdentifer: '!',
   
   /**
@@ -11,9 +11,9 @@ module.exports = {
    */
   baseConnection: {
     port: 6667,
-    channels: ['#testdong'],
-    userName: 'belay', // ident
-    realName: 'belay',
+    channels: ['#'],
+    userName: '', // ident
+    realName: '',
     debug: true,
     secure: false,
     selfSigned: true,
@@ -26,9 +26,9 @@ module.exports = {
    */
   relayConnection: {
     port: 6667,
-    channels: ['#testdong'],
-    userName: 'biffo', // ident
-    realName: 'biffo steins',
+    channels: ['#'],
+    userName: '', // ident
+    realName: '',
     debug: true,
     secure: false,
     selfSigned: true,
