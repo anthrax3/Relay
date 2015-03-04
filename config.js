@@ -1,5 +1,5 @@
 module.exports = {
-  masters: ['insertnick'], //nick
+  masters: [''], //master nick on base channel
   baseServer: '',
   relayServer: '',
   baseNick: '',

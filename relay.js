@@ -1,8 +1,14 @@
-var config = require('./config'),
+/*
+All proceeds to the Jim Rastlerton Foundation
+*/
+
+var config = require('./configtest'),
     irc = require('irc');
 
 var baseClient = new irc.Client(config.baseServer, config.baseNick, config.baseConnection),
     relayClient = new irc.Client(config.relayServer, config.relayNick, config.relayConnection);
+
+echoState = 1;  //init state of relay channel listener; toggle with !echo_off/!echo_on
 
 function parseCommand(msg) {
   if (msg[0] === config.commandIdentifer) {
@@ -27,42 +33,42 @@ relayClient.addListener('error', function(m) {
 });
 
 baseClient.addListener('message', function(f, t, m) {
-  var echoSate = 1;
   var com = parseCommand(m);
   
-  if (com) {
-    
-    if (com.command == 'belay') {
+    if (com) {
+      if (com.command == 'belay') {  //!belay message_to_be_relayed
       var chan = config.relayConnection.channels[0];
       relayClient.say(chan, com.params.join(' '));
       baseClient.say(t, '9,1<<Relay>> 1,9'+config.relayServer+" "+chan+" ->2,9 "+com.params.join(' '));
     }
-    else if (com.command == 'echo_off') {
-      var echoState = 0;
+    if (com.command == 'echo_off') {
+      echoState = 0;
       baseClient.say(t, 'echo='+echoState);
     }
-    else if (com.command == 'echo_on') {
-      var echoState = 1;
+    if (com.command == 'echo_on') {
+      echoState = 1;
       baseClient.say(t, 'echo='+echoState);
     }
-    else if (com.command == 'join') {
-      relayClient.say('#testdong', 'hi');
-      new irc.Client.part(config.relayServer, config.relayNick, config.relayConnection);
-      //config.relayConnection.channels[0] = '#testdong1';      
-      //relayClient.join('#testdong');
-      //relayClient.join(config.relayConnection.channels[0]);
-      //relayClient = new irc.Client(config.relayServer, config.relayNick, config.relayConnection);
+    /*
+    probably a better way to do this
+    */
+    if (com.command == 'join') {  //accepts input as !join #channel parting_word
+      chanJoin = config.relayConnection.channels[0];
+      var splitter = m.split(' ');
+      var partMsg = splitter[2]
+      relayClient.say(chanJoin, partMsg);
+      relayClient.part(chanJoin);
+      var chanJoin = splitter[1]
+      relayClient.join(chanJoin);
     }
   }
 });
 
-var echoState = 1;
-
 relayClient.addListener('message', function(from, to, message) {
   if (echoState == 1) {
     if (message.indexOf(config.relayNick) > -1) {
-        var baseChan = config.baseConnection.channels[0];
-        baseClient.say(baseChan, '1,9'+config.relayServer+' '+to+'4,9 '+from+' 1,9-> 2,9 '+message+echoState);
+      var baseChan = config.baseConnection.channels[0];
+      baseClient.say(baseChan, '1,9'+config.relayServer+' '+to+'4,9 '+from+' 1,9-> 2,9 '+message);
     }
   }
 });
