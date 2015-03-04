@@ -27,14 +27,34 @@ relayClient.addListener('error', function(m) {
 });
 
 baseClient.addListener('message', function(f, t, m) {
+  var echoSate = 1;
   var com = parseCommand(m);
   
   if (com) {
     
-    if (com.command == 'relay') {
+    if (com.command == 'belay') {
       var chan = config.relayConnection.channels[0];
       relayClient.say(chan, com.params.join(' '));
-      baseClient.say(t, 'Relay: '+config.relayServer+":"+chan+" -> "+com.params.join(' '));
+      baseClient.say(t, '9,1<<Relay>> 1,9'+config.relayServer+" "+chan+" ->2,9 "+com.params.join(' '));
+    }
+    else if (com.command == 'echo_off') {
+      var echoState = 0;
+      baseClient.say(t, 'echo='+echoState);
+    }
+    else if (com.command == 'echo_on') {
+      var echoState = 1;
+      baseClient.say(t, 'echo='+echoState);
+    }
+  }
+});
+
+var echoState = 1;
+
+relayClient.addListener('message', function(from, to, message) {
+  if (echoState == 1) {
+    if (message.indexOf(config.relayNick) > -1) {
+        var baseChan = config.baseConnection.channels[0];
+        baseClient.say(baseChan, '1,9'+config.relayServer+' '+to+'4,9 '+from+' 1,9-> 2,9 '+message+echoState);
     }
   }
 });
